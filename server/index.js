@@ -1,3 +1,4 @@
+'use strict';
 const express = require('express');
 const path = require('path');
 const app = express();
@@ -29,10 +30,5 @@ app.use((err, req, res, next) => {
   res.status(err.status || 505 ).send(err.message || 'Internal server error')
 })
 
-
-// initializing the app
-const PORT = process.env.PORT || 3000; // this can be useful if you deployt to Heroku
-app.listen(PORT, () => {
-  console.log(`listening on port ${PORT}`)
-});
-
+// exporting application
+module.exports = app

@@ -1,27 +1,29 @@
+'use strict';
 const router = require('express').Router();
 
 module.exports = router;
 
+// api/movie/test
 router.get('/test', (req, res, next) => {
   res.json({test: 'passed'})
 })
 
-// api/totoro
+// api/movie/
 router.get('/', (req, res, next) => {
   res.json({get: 'fetched'})
 });
 
-// api/totoro
+// api/movie
 router.post('/', (req, res, next) => {
   res.json({post: 'created'})
 });
 
-// api/howl/:totoroId
-router.put('/:totoroId', (req, res, next) => {
+// api/howl/:movieId
+router.put('/:movieId', (req, res, next) => {
   res.json({put: 'updated'})
 });
 
-// api/howl/:totoroId
-router.delete('/:totoroId', (req, res, next) => {
+// api/howl/:movieId
+router.delete('/:movieId', (req, res, next) => {
   res.json({delete: 'removed'})
 });

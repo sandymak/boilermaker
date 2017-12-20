@@ -8,8 +8,8 @@
       ...2. bundle.js
       ...3. bundle.js.map
 
-
 ###File setup
+    #####...0. main.js --> where backend is launched
     #####...1. app
             ...1. index.js
     ######...2. node_modules
@@ -20,15 +20,35 @@
             ...2. api
                 ...1. index.js
                 ...2. route1.js
-                ...3. route2.js
             ...3. db
-                ...1. index.js
+                ...1. index.js --> establish DB connection (to postgres or Heruku)
                 ...2. models
-                    ...1. subModel.js
+                    ...1. index.js --> ensure all subModels required & make associations & export this to main.js
+                    ...2. Model1.js
   ####2. .gitignore
   ####3. package.json
 
-###EXPRESS
+###EXPRESS - DB SYNC and APP LISTEN - main.js
+  1. installations
+    ...1. db
+    ...2. app
+
+  ```javascript
+    const db = require('./server/db/models');
+    const app = require('./server');
+    const PORT = process.env.PORT || 3000; //Heruku related
+    const chalk = require('chalk');
+
+    db.sync({force: true})
+    .then(() => {
+      console.log(chalk.magenta(`DB was synced.... @ ${__dirname}`))
+      app.listen(PORT, () => {
+        console.log(`app is listening on port ${PORT}`)
+      })
+    })
+  ```
+
+###EXPRESS - APP (server/index.js)
   1. installations (general)
     ...1. express
     ...2. morgan
@@ -41,6 +61,7 @@
     ...8. sequelize
     ...9. pg@7.4.0
     ...10. pg-hstore
+    ...11. chalk
 
   2. installations (dev-dependencies) (`--save-dev` or -D)
     ...1. morgan
@@ -74,11 +95,11 @@
   })
   ```
 
-###EXPRESS-ROUTES installations (within api/index.js)
-  1. mainRoute
-    ...1. express
-    ...2. require sub routes
-    ...3. module.export apiRouter
+###EXPRESS-ROUTES installations
+  ####mainRoute (within server/api/index.js)
+  ...1. express
+  ...2. require sub routes
+  ...3. module.export apiRouter
 
   ```javascript
   const apiRouter = require('express').Router();
@@ -93,44 +114,85 @@
   })
   module.exports = apiRouter
   ```
-  2. subRoutes
-    ...1. express
-    ...2. module.export subRouter
+  ####subRoutes (within server/api/route1.js)
+  ...1. express
+  ...2. module.export subRouter
 
   ```javascript
   const router = require('express').Router();
   module.exports = router;
 
-  //api/router1/
+  //api/route1/
   router.get('/' (req, res, next) => {
     // send whatever was gotten
   })
 
-  //api/router1/
+  //api/route1/
   router.post('/', (req, res, next) => {
     // send whatever was created
   })
 
-  // api/router1/:routerId
-  router.put('/:routerId', (req, res, next) => {
+  // api/route1/:routerId
+  router.put('/:routeId', (req, res, next) => {
     // send whatever was updated
   })
 
-  //api/router1/:routerId
-  router.delete('/:routerId', (req, res, next) => {
+  //api/route1/:routerId
+  router.delete('/:routeId', (req, res, next) => {
     // send status when item removed
   })
   ```
 
-###DB
+###DB intialization (create Sequelize instance) (db/index.js)
   1. installations
   ...1. createDb `nameOfDb`
 
-  2. Main DB
+  2. Main Database initialization...
+  ```javascript
+  const chalk = require('chalk')
+
+  console.log(chalk.blue(`Database connection established.....${__dirname}`))
+
+  const Sequelize = require('sequelize');
+  module.exports = new Sequelize(process.env.DATABASE_ENV || `postgres://localhost/5432/${nameOfDb}`);
+  ```
+### DB homebase (db/models/index.js)
+  1. installations
+    ...1. db (from initialized db instance)
+    ...2. sub models (if no associations needed, just require models, this ensures that those files are ran)
+    ...3. associations
+    ...4. export db (this is what we will sync)
+
+  ```javascript
+  const db = require('../index')
+  const Model1 = require('./Model1');
+  const Model2 = require('./Model2');
+  require('./Model3');
+
+  // associations....
+  Model1.belongsto(Model2);
+  MOdel2.hasMany(Model1);
+
+  module.exports = db // exporting the same db instance with these tabels and associations made
+  ```
+### DB Model Definitions (db/models/model1.js)
+  1. installations
+    ...1. Sequelize
+    ...2. db (from initialized db instance)
+
   ```javascript
   const Sequelize = require('sequelize');
-  const db = new Sequelize(`postgres://localhost/5432/${nameOfDb}`);
+  const db = require('../index');
 
-  module.exports = db;
+  module.export = db.define('model1', {
+    // etc model definitions example....
+    name: {
+      type: Sequelize.STRING,
+      allowNull: true,
+      validate: {
+        notEmpty: true
+      }
+    }
+  })
   ```
 
