@@ -9,24 +9,27 @@
       ...3. bundle.js.map
 
 ###File setup
-    #####...0. main.js --> where backend is launched
-    #####...1. app
+  ####0. main.js --> where backend is launched
+  ####1. app
+        ...1. main.js
+        ...2. components
+        ...3. reducers
+  ####2. node_modules
+  ####3. public
+        ...1. index.html
+  ####4. server
+        ...1. index.js
+        ...2. api
             ...1. index.js
-    ######...2. node_modules
-    ######...3. public
-            ...1. index.html
-    #####...4. server
-            ...1. index.js
-            ...2. api
-                ...1. index.js
-                ...2. route1.js
-            ...3. db
-                ...1. index.js --> establish DB connection (to postgres or Heruku)
-                ...2. models
-                    ...1. index.js --> ensure all subModels required & make associations & export this to main.js
-                    ...2. Model1.js
-  ####2. .gitignore
-  ####3. package.json
+            ...2. route1.js
+        ...3. db
+            ...1. index.js --> establish DB connection (to postgres or Heruku)
+            ...2. models
+                ...1. index.js --> ensure all subModels required & make associations & export this to main.js
+                ...2. Model1.js
+  ####5. .gitignore
+  ####6. package.json
+  ####7. webpack.config.js
 
 ###EXPRESS - DB SYNC and APP LISTEN - main.js
   1. installations
@@ -171,7 +174,7 @@
 
   // associations....
   Model1.belongsto(Model2);
-  MOdel2.hasMany(Model1);
+  Model2.hasMany(Model1);
 
   module.exports = db // exporting the same db instance with these tabels and associations made
   ```
@@ -195,4 +198,15 @@
     }
   })
   ```
+###APP
+  1. installations (regular dependencies)
+    ...1. react
+    ...2. react-dom
+    ...3. react-router-dom
 
+  2. installations (devDependencies) npm install --save-dev (-D)
+      ...1. webpack
+      ...2. babel-core
+      ...2. babel-loader
+      ...3. babel-preset-react
+      ...4. babel-preset-env
