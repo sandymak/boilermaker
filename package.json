@@ -11,15 +11,22 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "axios": "^0.17.1",
     "body-parser": "^1.18.2",
     "chalk": "^2.3.0",
+    "css-loader": "^0.28.7",
     "express": "^4.16.2",
     "pg": "^7.4.0",
     "pg-hstore": "^2.3.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
-    "sequelize": "^4.28.6"
+    "redux": "^3.7.2",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.2.0",
+    "sequelize": "^4.28.6",
+    "style-loader": "^0.19.1"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

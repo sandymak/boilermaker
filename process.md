@@ -7,13 +7,17 @@
       ...1. node_modules
       ...2. bundle.js
       ...3. bundle.js.map
+  4. webpack.config.js (copy and paste!)
 
 ###File setup
   ####0. main.js --> where backend is launched
   ####1. app
+
         ...1. main.js
-        ...2. components
-        ...3. reducers
+        ...2. store.js
+        ...3. components
+        ...4. reducers
+          ...1. rootReducers
   ####2. node_modules
   ####3. public
         ...1. index.html
@@ -203,6 +207,13 @@
     ...1. react
     ...2. react-dom
     ...3. react-router-dom
+    ...4. redux
+    ...5. react-redux
+    ...6. redux-thunk
+          https://github.com/gaearon/redux-thunk
+    ...7. redux-logger
+          https://github.com/evgenyrodionov/redux-logger
+    ...8. axios
 
   2. installations (devDependencies) npm install --save-dev (-D)
       ...1. webpack
@@ -210,3 +221,90 @@
       ...2. babel-loader
       ...3. babel-preset-react
       ...4. babel-preset-env
+
+  ####main.js (using react-redux Provider and store)
+  ```javascript
+  import React from 'react';
+  import { render } from 'react-dom';
+  import Provider from 'react-redux';
+  import store from './store';
+
+  render(
+    <Provider store={store}>
+      <div>Testing...</div>
+    </Provider>
+    ,document.getElementById(`${initialStartingIdInHTML}`)
+  )
+  ```
+
+  ####store.js
+  ```javascript
+  import { createStore, applyMiddleware } from 'redux';
+  import { loggingMiddleware } from 'redux-logger';
+  import { thunkMiddleware } from 'redux-thunk';
+  import rootReducer from './reducers/rootReducer'
+
+  export default createStore(rootReducer, applyMiddleware(thunkMiddleware, loggingMiddleware));
+  ```
+
+  ####rootReducer.js
+  ```javascript
+  import { combineReducer } from 'redux';
+  import { `${otherReducer}` } from './otherReducer';
+
+  const rootReducer = combineReducer({
+    otherReducers: otherReducer
+  })
+
+  export default rootReducer
+  ```
+
+  ####otherReducer.js
+    1. initialState
+    2. action TYPE (variable)
+    3. action creator
+    4. THUNK action creator generates a function that can be dispatched because we are using `redux-thunk`
+    5. Reducer func (takes in state and an action)
+
+```javascript
+import axios from 'axios';
+
+// initial state
+const initialState = [];
+
+// action type
+const GOT_STUDIOS = 'GOT_STUDIOS';
+
+// action creator
+const gotStudios = studios => {
+  const action = {
+    type: GOT_STUDIOS,
+    studios
+  };
+  return action
+};
+
+// thunk action creator
+export function fetchStudios () {
+  return thunkFunc (dispatch) => {
+    return axios.get('/api/studios')
+    .then(res => res.data)
+    .then(studios => dispatch(gotStudios(studios)))
+    .catch(console.error)
+  }
+}
+
+//reducer
+const studioReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case GOT_STUDIOS:
+      return action.studios;
+  }
+}
+export default studioReducer;
+```
+
+###CSS
+  1. installations (npm install --D)
+    ...1. style-loader
+    ...2. css-loader
